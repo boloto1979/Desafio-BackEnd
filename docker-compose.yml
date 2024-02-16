@@ -1,0 +1,39 @@
+version: "3.7"
+
+services:
+    payt-app:
+        build: .
+        container_name: payt-app
+        entrypoint: sh cmd.sh
+        volumes:
+            - ./:/var/www/html
+        ports:
+            - "8080:80"
+        depends_on:
+            - payt-db
+        networks:
+            - payt-network
+        environment:
+            DB_CONNECTION: mysql
+            DB_HOST: payt-db
+            DB_PORT: 3306
+            DB_DATABASE: payt
+            DB_USERNAME: root
+            DB_PASSWORD: root
+
+    payt-db:
+        image: mysql:5.7
+        container_name: payt-db
+        volumes:
+            - ./db/:/var/lib/mysql
+        ports:
+            - "3306:3306"
+        environment:
+            MYSQL_DATABASE: payt
+            MYSQL_ROOT_PASSWORD: root
+        networks:
+            - payt-network
+
+networks:
+    payt-network:
+        driver: bridge
